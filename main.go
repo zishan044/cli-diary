@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -34,10 +35,14 @@ func main() {
 
 	newEntry.date = time.Now()
 
-	fmt.Println()
+	file, err := os.OpenFile("entries.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		log.Fatalf("error opening file")
+	}
 
-	fmt.Println(newEntry.title)
-	fmt.Println(newEntry.date)
-	fmt.Println(strings.Join(newEntry.tags, " "))
-	fmt.Println(newEntry.text)
+	_, err = file.WriteString(newEntry.title + "\n" + newEntry.date.Format("Jan 2, 2006") + "\n" + strings.Join(newEntry.tags, " ") + "\n" + newEntry.text + "\n")
+	if err != nil {
+		log.Fatalf("error writing diary")
+	}
+
 }
